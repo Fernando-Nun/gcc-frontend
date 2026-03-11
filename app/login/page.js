@@ -112,7 +112,7 @@ export default function LoginPage() {
             justifyContent: 'center',
             marginTop: 40,
           }}>
-            {['Fuzzy Matching', 'Correos Automáticos', 'IA Gemini', 'Dashboard'].map(f => (
+            {['Fuzzy Matching', 'Correos Automáticos', 'IA ', 'Dashboard'].map(f => (
               <span key={f} style={{
                 background: 'rgba(255,255,255,0.07)',
                 border: '1px solid rgba(255,255,255,0.12)',

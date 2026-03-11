@@ -202,7 +202,7 @@ function IAComentariosContent() {
                 color: 'var(--purple)',
               }}>
                 <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
-                <span style={{ fontSize: '0.82rem' }}>Clasificando con Gemini AI...</span>
+                <span style={{ fontSize: '0.82rem' }}>Clasificando con GPT-5.4...</span>
               </div>
             ) : clasificados.length === 0 ? (
               <div style={{
@@ -309,7 +309,7 @@ function AIHeader({ icon, title, sub }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{sub}</span>
-          <span className="ai-badge">✦ Gemini AI</span>
+          <span className="ai-badge">✦ GPT-5.4</span>
         </div>
       </div>
     </div>

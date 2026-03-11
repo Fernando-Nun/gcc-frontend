@@ -111,11 +111,13 @@ function IAEmailContent() {
               <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: '0.8rem' }}>
                 Sin órdenes atrasadas con contacto
               </div>
+
+
             ) : ordenes.map(o => {
-              const selec = seleccionadas.includes(o.po_id);
-              return (
+            const selec = seleccionadas.includes(o.po_id);
+            return (
                 <label
-                  key={o.po_id}
+                key={o.id}
                   style={{
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -309,7 +311,7 @@ function AIHeader({ icon, title, sub }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{sub}</span>
-          <span className="ai-badge">✦ Gemini AI</span>
+          <span className="ai-badge">✦ GPT-5.4</span>
         </div>
       </div>
     </div>

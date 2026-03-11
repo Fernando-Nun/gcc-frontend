@@ -88,7 +88,7 @@ export default function AppShell({ children }) {
               }}>
                 {title}
               </span>
-              {isAI && <span className="ai-badge">✦ Gemini AI</span>}
+              {isAI && <span className="ai-badge">✦ GPT-5.4</span>}
             </div>
             <span style={{
               fontSize: '0.7rem',

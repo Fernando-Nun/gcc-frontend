@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { authAPI } from '@/lib/api';
 import { setSession } from '@/lib/auth';
+import './login.css'; // ← AQUI VA EL CSS QUE TE DOY ABAJO
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,102 +29,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--navy-dark)', flexDirection: 'column', padding: '0 20px' }}>
+    <div className="login-container">
 
       {/* Panel izquierdo */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 20px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <div className="left-panel">
 
         {/* Decoración */}
-        <div style={{
-          position: 'absolute',
-          bottom: -80,
-          right: -80,
-          width: '45vw', // Cambiar a porcentaje para responsividad
-          height: '45vw', // Cambiar a porcentaje para responsividad
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(250,34,20,0.15) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
+        <div className="circle-red" />
+        <div className="circle-purple" />
 
-        <div style={{
-          position: 'absolute',
-          top: -60,
-          left: -60,
-          width: '30vw', // Cambiar a porcentaje para responsividad
-          height: '30vw', // Cambiar a porcentaje para responsividad
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '90%' }}>
+        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 480 }}>
 
           {/* Logo */}
-          <div style={{ marginBottom: 20 }}>
+          <div className="left-logo">
             <Image
               src="/imagotipo-gcc.svg"
               alt="GCC México"
-              width={250}
-              height={100}
+              width={300}
+              height={120}
               style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
               priority
             />
           </div>
 
-          <div style={{
-            width: 70,
-            height: 3,
-            background: 'var(--red)',
-            margin: '0 auto 20px',
-          }} />
+          <div className="left-divider" />
 
-          <div style={{
-            fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: '1.5rem', // Tamaño de fuente reducido
-            color: 'rgba(255,255,255,0.9)',
-            letterSpacing: 3,
-            marginBottom: 10,
-          }}>
+          <div className="left-title">
             SISTEMA DE EXPEDITACIÓN
           </div>
 
-          <div style={{
-            fontSize: '0.9rem', // Tamaño de fuente reducido
-            color: 'rgba(255,255,255,0.4)',
-            lineHeight: 1.6,
-          }}>
+          <div className="left-subtitle">
             Gestión y seguimiento automatizado de órdenes de compra con inteligencia artificial
           </div>
 
           {/* Pills */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 8,
-            justifyContent: 'center',
-            marginTop: 20,
-          }}>
+          <div className="pills">
             {['Fuzzy Matching', 'Correos Automáticos', 'IA', 'Dashboard'].map(f => (
-              <span key={f} style={{
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                color: 'rgba(255,255,255,0.6)',
-                padding: '5px 12px', // Reducir padding
-                borderRadius: 99,
-                fontSize: '0.7rem', // Tamaño de fuente reducido
-                letterSpacing: 1,
-              }}>
-                {f}
-              </span>
+              <span key={f} className="pill">{f}</span>
             ))}
           </div>
 
@@ -131,72 +73,37 @@ export default function LoginPage() {
       </div>
 
       {/* Panel derecho */}
-      <div style={{
-        width: '100%', // Ajustar a 100% para responsividad
-        maxWidth: 600,
-        background: '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 20px', // Reducir padding
-      }}>
+      <div className="right-panel">
         <div style={{ width: '100%' }}>
 
           {/* Logo formulario */}
-          <div style={{ marginBottom: 20 }}>
+          <div className="form-header">
             <Image
               src="/imagotipo-gcc.svg"
               alt="GCC"
-              width={80} // Reducir tamaño del logo
-              height={80} // Reducir tamaño del logo
+              width={95}
+              height={95}
               style={{ objectFit: 'contain' }}
               priority
             />
 
-            <div style={{
-              fontFamily: 'Bebas Neue, sans-serif',
-              fontSize: '2.5rem', // Tamaño de fuente reducido
-              color: 'var(--navy)',
-              letterSpacing: 5,
-              marginTop: 10,
-              marginBottom: 4,
-            }}>
-              ACCESO
-            </div>
+            <div className="form-title">ACCESO</div>
 
-            <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
+            <div className="form-subtitle">
               Ingresa con tus credenciales corporativas
             </div>
           </div>
 
           {error && (
-            <div style={{
-              background: 'var(--red-light)',
-              border: '1px solid rgba(250,34,20,0.2)',
-              color: 'var(--red)',
-              padding: '10px 14px', // Reducir padding
-              borderRadius: 4,
-              fontSize: '0.85rem', // Tamaño de fuente reducido
-              marginBottom: 20,
-            }}>
+            <div className="error-box">
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin}>
 
-            <div style={{ marginBottom: 20 }}>
-              <label style={{
-                display: 'block',
-                fontSize: '0.65rem', // Tamaño de fuente reducido
-                textTransform: 'uppercase',
-                letterSpacing: 1.6,
-                color: 'var(--muted)',
-                marginBottom: 6,
-                fontWeight: 600,
-              }}>
-                Correo electrónico
-              </label>
+            <div className="form-group">
+              <label className="form-label">Correo electrónico</label>
 
               <input
                 type="email"
@@ -205,22 +112,11 @@ export default function LoginPage() {
                 placeholder="usuario@gcc.com.mx"
                 required
                 className="input"
-                style={{ padding: '12px 14px', fontSize: '0.9rem', width: '100%' }} // Ajustar ancho
               />
             </div>
 
-            <div style={{ marginBottom: 24 }}>
-              <label style={{
-                display: 'block',
-                fontSize: '0.65rem', // Tamaño de fuente reducido
-                textTransform: 'uppercase',
-                letterSpacing: 1.6,
-                color: 'var(--muted)',
-                marginBottom: 6,
-                fontWeight: 600,
-              }}>
-                Contraseña
-              </label>
+            <div className="form-group">
+              <label className="form-label">Contraseña</label>
 
               <input
                 type="password"
@@ -229,20 +125,13 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 className="input"
-                style={{ padding: '12px 14px', fontSize: '0.9rem', width: '100%' }} // Ajustar ancho
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn btn-navy"
-              style={{
-                width: '100%',
-                justifyContent: 'center',
-                padding: '16px 20px', // Reducir padding
-                fontSize: '1rem' // Tamaño de fuente reducido
-              }}
+              className="btn btn-navy submit-btn"
             >
               {loading
                 ? <><span className="spinner" />INGRESANDO...</>
@@ -251,18 +140,9 @@ export default function LoginPage() {
 
           </form>
 
-          <div style={{
-            marginTop: 20,
-            textAlign: 'center',
-            fontSize: '0.85rem', // Tamaño de fuente reducido
-            color: 'var(--muted)',
-          }}>
+          <div className="register-text">
             ¿No tienes cuenta?{' '}
-            <a href="/registro" style={{
-              color: 'var(--navy)',
-              fontWeight: 600,
-              textDecoration: 'none'
-            }}>
+            <a href="/registro" className="register-link">
               Regístrate aquí
             </a>
           </div>

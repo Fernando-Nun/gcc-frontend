@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { TrendingUp, Clock, AlertTriangle, Mail, FileText, Brain, Bot } from 'lucide-react';
 
+
 const LIMIT = 15;
 
 export default function DashboardPage() {
@@ -32,31 +33,31 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
 
-  // Cargar estadísticas
-  useEffect(() => {
+    // Cargar estadísticas solo si hay datos
+    useEffect(() => {
     ordenesAPI.estadisticas()
-      .then(data => {
+        .then(data => {
         if (data.kpis.total > 0) setStats(data);
-      })
-      .catch(() => {});
-  }, []);
+        })
+        .catch(() => {});
+    }, []);
 
-  // Cargar órdenes
-  useEffect(() => {
+    // Cargar órdenes solo si hay datos
+    useEffect(() => {
     setLoading(true);
     const params = {
-      page, limit: LIMIT,
-      ...(tab !== 'all' ? { status: tab } : {}),
-      ...(search ? { search } : {}),
+        page, limit: LIMIT,
+        ...(tab !== 'all' ? { status: tab } : {}),
+        ...(search ? { search } : {}),
     };
     ordenesAPI.listar(params)
-      .then(d => {
+        .then(d => {
         setOrdenes(d.data || []);
         setTotal(d.count || 0);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [page, tab, search]);
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }, [page, tab, search]);
 
   async function handleEnviarCorreo(orden) {
     try {
@@ -68,6 +69,7 @@ function DashboardContent() {
   }
 
   const kpis = stats?.kpis || {};
+
   const DONUT = [
     { name: 'Atrasadas',    value: kpis.atrasado     || 0, color: 'var(--red)'    },
     { name: 'Expeditación', value: kpis.expeditacion || 0, color: 'var(--yellow)' },
@@ -78,22 +80,60 @@ function DashboardContent() {
     <div>
       {/* ── KPI Cards ── */}
       <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        gap: '14px',
-        marginBottom: '18px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 14,
+        marginBottom: 18,
       }}>
         {[
           { label: 'Total Órdenes',    key: 'total',        color: 'var(--navy)',   href: null              },
           { label: 'Atrasadas',        key: 'atrasado',     color: 'var(--red)',    href: '/ordenes?status=atrasado',
-            icon: (<AlertTriangle style={{ width: "1.5rem", height: "1.5rem", color: "#dc2626" }} />)
+            icon: (<div
+  style={{
+    backgroundColor: "#fee2e2", // bg-red-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><AlertTriangle
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#dc2626"        // text-red-600
+  }}
+/>
+</div>)
           },
           { label: 'En Expeditación',  key: 'expeditacion', color: 'var(--yellow)', href: '/ordenes?status=expeditacion',
-            icon: (<TrendingUp style={{ width: "1.5rem", height: "1.5rem", color: "#ca8a04" }} />)
+            icon: (<div
+  style={{
+    backgroundColor: "#fef9c3", // bg-yellow-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><TrendingUp
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#ca8a04"        // text-yellow-600
+  }}
+/>
+</div>)
           },
           { label: 'A Tiempo',         key: 'atiempo',      color: 'var(--green)',  href: '/ordenes?status=atiempo',
-            icon: (<Clock style={{ width: "1.5rem", height: "1.5rem", color: "#16a34a" }} />)
+            icon: (<div
+  style={{
+    backgroundColor: "#d1fae5", // bg-green-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><Clock
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#16a34a"        // text-green-600
+  }}
+/>
+</div>)
           },
         ].map(({ label, key, color, href, icon }) => (
           <div
@@ -106,24 +146,26 @@ function DashboardContent() {
               borderRadius: 8,
               padding: '18px 20px',
               cursor: href ? 'pointer' : 'default',
-              transition: 'all 0.18s ease',
+              transition: 'all 0.18s ease',   // transition-all
               boxShadow: '0 1px 4px rgba(25,43,141,0.05)',
-              flex: '1 1 calc(25% - 14px)',
-              minWidth: '220px',
+              position: 'relative',
+              overflow: 'hidden',
+              transform: 'scale(1)',          // estado normal
             }}
             onMouseEnter={e => {
               if (!href) return;
               e.currentTarget.style.boxShadow =
-                '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)';
-              e.currentTarget.style.transform = 'scale(1.05)';
+                '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)'; // shadow-xl
+              e.currentTarget.style.transform = 'scale(1.05)'; // hover:scale-105
             }}
             onMouseLeave={e => {
               if (!href) return;
               e.currentTarget.style.boxShadow =
                 '0 1px 4px rgba(25,43,141,0.05)';
-              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.transform = 'scale(1)'; // vuelve al normal
             }}
           >
+
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -170,10 +212,10 @@ function DashboardContent() {
 
       {/* ── Mini stats ── */}
       <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '12px',
-        marginBottom: '18px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 12,
+        marginBottom: 18,
       }}>
         {[
           { label: 'Con Contacto',  value: kpis.con_contacto, color: 'var(--green)' },
@@ -196,8 +238,6 @@ function DashboardContent() {
             border: '1.5px solid var(--border)',
             borderRadius: 6,
             padding: '12px 16px',
-            flex: '1 1 calc(25% - 12px)',
-            minWidth: '200px',
           }}>
             <div style={{
               fontSize: '0.6rem',
@@ -222,10 +262,10 @@ function DashboardContent() {
 
       {/* ── Charts row 1 ── */}
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '14px',
-        marginBottom: '14px',
+        display: 'grid',
+        gridTemplateColumns: '2fr 1fr',
+        gap: 14,
+        marginBottom: 14,
       }}>
         <ChartCard title="Top Proveedores — Órdenes Atrasadas">
           {stats?.topSuppliers?.length > 0 ? (
@@ -300,8 +340,8 @@ function DashboardContent() {
 
       {/* ── Charts row 2 ── */}
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
         gap: 14,
         marginBottom: 18,
       }}>
@@ -363,8 +403,8 @@ function DashboardContent() {
         </div>
         <div className="card-body">
           <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
             gap: 10,
           }}>
             {[
@@ -385,8 +425,6 @@ function DashboardContent() {
                   cursor: 'pointer',
                   transition: 'all 0.18s',
                   borderTop: `3px solid ${color}`,
-                  flex: '1 1 calc(20% - 10px)', // Ajuste para que se adapten en filas
-                  minWidth: '180px',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = 'rgba(124,58,237,0.12)';
@@ -456,7 +494,7 @@ function DashboardContent() {
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Buscar PO, proveedor, comprador..."
               className="input"
-              style={{ width: '100%', maxWidth: '240px', padding: '6px 12px', fontSize: '0.78rem' }}
+              style={{ width: 240, padding: '6px 12px', fontSize: '0.78rem' }}
             />
           </div>
         </div>

@@ -33,8 +33,8 @@ const NAV = [
   },
 ];
 
-export default function Sidebar({ user, onLogout, badges = {} }) {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar({ user, onLogout, badges = {}, collapsed = false, onToggle }) {
+  // collapsed is now controlled by parent; fallback to local state if not provided? we assume parent handles it
   const router   = useRouter();
   const pathname = usePathname();
 
@@ -58,81 +58,75 @@ export default function Sidebar({ user, onLogout, badges = {} }) {
     }}>
 
       {/* Logo + toggle */}
-      <div style={{
-        padding: '0 12px',
-        height: 60,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        flexShrink: 0,
-        gap: 8,
-      }}>
-        {!collapsed && (
-          <div style={{ overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-            <Image
-              src="/imagotipo-gcc.svg"
-              alt="GCC México"
-              width={110}
-              height={38}
-              style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-            />
-          </div>
-        )}
-        {collapsed && (
-          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <Image
-              src="/imagotipo-gcc.svg"
-              alt="GCC"
-              width={28}
-              height={28}
-              style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
-            />
-          </div>
-        )}
-        {!collapsed && (
-          <button
-            onClick={() => setCollapsed(true)}
-            style={{
-              background: 'rgba(255,255,255,0.07)',
-              border: 'none',
-              color: 'rgba(255,255,255,0.5)',
-              width: 26, height: 26,
-              borderRadius: 4,
-              cursor: 'pointer',
-              fontSize: '0.65rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            ◀
-          </button>
-        )}
-        {collapsed && (
-          <button
-            onClick={() => setCollapsed(false)}
-            style={{
-              position: 'absolute',
-              bottom: 70, left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(255,255,255,0.07)',
-              border: 'none',
-              color: 'rgba(255,255,255,0.5)',
-              width: 26, height: 26,
-              borderRadius: 4,
-              cursor: 'pointer',
-              fontSize: '0.65rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            ▶
-          </button>
-        )}
-      </div>
+<div style={{
+  padding: collapsed ? '40px' : '0 12px',
+  height: 60,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: collapsed ? 'center' : 'space-between',
+  borderBottom: '1px solid rgba(255,255,255,0.07)',
+  flexShrink: 0,
+  gap: 8,
+}}>
+
+  {!collapsed ? (
+  <Image
+    src="/imagotipo-gcc.svg"
+    alt="GCC México"
+    width={110}
+    height={38}
+    style={{
+      objectFit: 'contain',
+      filter: 'brightness(0) invert(1)'
+    }}
+  />
+) : (
+  <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+    <Image
+      src="/imagotipo-gcc.svg"
+      alt="GCC"
+      width={28}
+      height={28}
+      style={{
+        objectFit: 'contain',
+        filter: 'brightness(0) invert(1)'
+      }}
+    />
+  </div>
+)}
+
+  {/* Toggle */}
+  <button
+    onClick={() => onToggle && onToggle()}
+    title={collapsed ? 'Expandir menú' : 'Contraer menú'}
+    style={{
+      background: 'rgba(255,255,255,0.07)',
+      border: 'none',
+      color: 'rgba(255,255,255,0.6)',
+      width: 28,
+      height: 28,
+      borderRadius: 6,
+      cursor: 'pointer',
+      fontSize: '0.7rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0,
+      transition: 'all 0.15s',
+    }}
+    onMouseEnter={e => {
+      e.currentTarget.style.background = 'rgba(255,255,255,0.14)';
+      e.currentTarget.style.color = '#fff';
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+      e.currentTarget.style.color = 'rgba(255,255,255,0.6)';
+    }}
+  >
+    {collapsed ? '▶' : '◀'}
+  </button>
+
+</div>
 
       {/* Nav */}
       <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '10px 0' }}>

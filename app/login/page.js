@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { authAPI } from '@/lib/api';
 import { setSession } from '@/lib/auth';
-import './login.css'; // ← AQUI VA EL CSS QUE TE DOY ABAJO
+import './login.css';
 
 export default function LoginPage() {
   const router = useRouter();

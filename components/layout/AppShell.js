@@ -23,6 +23,9 @@ export default function AppShell({ children }) {
   const pathname = usePathname();
   const [badges, setBadges] = useState({});
 
+  // nuevo estado para saber si la barra está contraída
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   const title = Object.entries(TITLES).find(([k]) => pathname.startsWith(k))?.[1] || 'Expeditación';
   const isAI  = pathname.startsWith('/ia');
 
@@ -54,11 +57,17 @@ export default function AppShell({ children }) {
   return (
     <ToastProvider>
       <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <Sidebar user={user} onLogout={logout} badges={badges} />
+        <Sidebar
+          user={user}
+          onLogout={logout}
+          badges={badges}
+          collapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed(c => !c)}
+        />
 
         {/* Main */}
         <div style={{
-          marginLeft: 'var(--sidebar-w)',
+          marginLeft: sidebarCollapsed ? '60px' : 'var(--sidebar-w)',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',

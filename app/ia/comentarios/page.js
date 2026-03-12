@@ -4,6 +4,7 @@ import AppShell from '@/components/layout/AppShell';
 import { ordenesAPI, iaAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import { trunc } from '@/lib/utils';
+import { Brain } from 'lucide-react';
 
 const CATEGORIAS = {
   confirmado:     { label: '✓ Confirmado',     bg: 'var(--green-light)',   color: 'var(--green)'   },
@@ -67,7 +68,7 @@ function IAComentariosContent() {
   return (
     <div>
       <AIHeader
-        icon="◈"
+        icon={<Brain />}
         title="ANÁLISIS DE COMENTARIOS"
         sub="Clasifica automáticamente los comentarios del reporte usando inteligencia artificial"
       />
@@ -215,7 +216,7 @@ function IAComentariosContent() {
                 color: 'var(--muted)',
                 textAlign: 'center',
               }}>
-                <span style={{ fontSize: '2.5rem' }}>◈</span>
+                <span style={{ fontSize: '2.5rem' }}><Brain style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></span>
                 <span style={{ fontSize: '0.82rem' }}>
                   Haz clic en "Clasificar con IA"<br />para analizar los comentarios
                 </span>

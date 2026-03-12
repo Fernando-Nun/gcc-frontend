@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { uploadAPI } from '@/lib/api';
+import { FileSpreadsheet, Users  } from 'lucide-react';
 
 export default function UploadPage() {
   return <AppShell><UploadContent /></AppShell>;
@@ -63,7 +64,7 @@ function UploadContent() {
       }}>
         <DropZone
           label="REPORTE COUPA"
-          icon="📋"
+          icon={<FileSpreadsheet />}
           desc="Archivo exportado desde Coupa con las órdenes de compra activas"
           accept=".xlsx,.csv,.xls"
           file={coupaFile}
@@ -71,7 +72,7 @@ function UploadContent() {
         />
         <DropZone
           label="SUPPLIER LIST"
-          icon="🏭"
+          icon={<Users />}
           desc="Archivo con datos de contacto de proveedores (Name 1, E-Mail Address, etc.)"
           accept=".xlsx,.csv,.xls"
           file={suppliersFile}

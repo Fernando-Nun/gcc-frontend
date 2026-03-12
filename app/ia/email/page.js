@@ -5,6 +5,8 @@ import AppShell from '@/components/layout/AppShell';
 import { ordenesAPI, iaAPI, correosAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import { trunc } from '@/lib/utils';
+import { Mail } from 'lucide-react';
+
 
 export default function IAEmailPage() {
   return (
@@ -121,7 +123,7 @@ function IAEmailContent() {
             alignItems: 'center', justifyContent: 'center',
             minHeight: 300, gap: 14, textAlign: 'center',
           }}>
-            <span style={{ fontSize: '3rem' }}>✉</span>
+            <span style={{ fontSize: '3rem' }}><Mail style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></span>
             <div style={{
               fontFamily: 'Bebas Neue, sans-serif',
               fontSize: '1.4rem', letterSpacing: 2, color: 'var(--navy)',
@@ -306,7 +308,7 @@ function IAEmailContent() {
                 justifyContent: 'center', height: 300, gap: 12,
                 color: 'var(--muted)', textAlign: 'center',
               }}>
-                <span style={{ fontSize: '2rem' }}>✉</span>
+                <span style={{ fontSize: '2rem' }}><Mail style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></span>
                 <span style={{ fontSize: '0.82rem' }}>
                   Selecciona las órdenes que quieres incluir<br />y haz clic en "Generar Correo"
                 </span>
@@ -345,7 +347,7 @@ function AIHeader({ supplier }) {
         border: '1.5px solid rgba(124,58,237,0.2)',
         flexShrink: 0,
       }}>
-        ✉
+        <Mail />
       </div>
       <div>
         <div style={{

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import AppShell from '@/components/layout/AppShell';
 import { iaAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import { FileText, BarChart3, Factory, Building2, User, CheckCircle } from 'lucide-react';
+
 
 export default function IAResumenPage() {
   return <AppShell><IAResumenContent /></AppShell>;
@@ -43,17 +45,17 @@ function IAResumenContent() {
   }
 
   const OPCIONES = [
-    { key: 'atrasadas',       label: 'Estado general y órdenes atrasadas', icon: '📊' },
-    { key: 'proveedores',     label: 'Análisis de proveedores críticos',    icon: '🏭' },
-    { key: 'plantas',         label: 'Plantas con mayor afectación',        icon: '🏗' },
-    { key: 'compradores',     label: 'Compradores responsables',            icon: '👤' },
-    { key: 'recomendaciones', label: 'Recomendaciones de acción',           icon: '✅' },
+    { key: 'atrasadas',       label: 'Estado general y órdenes atrasadas', icon: <BarChart3 /> },
+    { key: 'proveedores',     label: 'Análisis de proveedores críticos',    icon: <Factory /> },
+    { key: 'plantas',         label: 'Plantas con mayor afectación',        icon: <Building2 /> },
+    { key: 'compradores',     label: 'Compradores responsables',            icon: <User /> },
+    { key: 'recomendaciones', label: 'Recomendaciones de acción',           icon: <CheckCircle /> },
   ];
 
   return (
     <div>
       <AIHeader
-        icon="≡"
+        icon={<FileText />}
         title="RESUMEN EJECUTIVO"
         sub="Genera un análisis ejecutivo completo del estado actual de las compras"
       />
@@ -159,7 +161,7 @@ function IAResumenContent() {
                 color: 'var(--muted)',
                 textAlign: 'center',
               }}>
-                <span style={{ fontSize: '2.5rem' }}>≡</span>
+                <span style={{ fontSize: '2.5rem' }}><FileText style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></span>
                 <span style={{ fontSize: '0.82rem' }}>
                   Selecciona las secciones y haz clic<br />en "Generar Resumen"
                 </span>

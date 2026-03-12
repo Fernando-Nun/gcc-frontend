@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from 'react';
 import AppShell from '@/components/layout/AppShell';
 import { iaAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import { Bot } from 'lucide-react';
+
 
 const SUGERENCIAS = [
   '¿Cuántas órdenes están atrasadas?',
@@ -70,7 +72,7 @@ function IAChatContent() {
   return (
     <div>
       <AIHeader
-        icon="⬡"
+        icon={<Bot />}
         title="ASISTENTE IA"
         sub="Consulta información del reporte en lenguaje natural"
       />

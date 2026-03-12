@@ -2,32 +2,33 @@
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { LayoutDashboard, LogOut, Bot, AlertTriangle, Brain, FileText, TrendingUp, CircleAlert, Upload, CircleCheck, Mail} from 'lucide-react';
 
 const NAV = [
   {
     section: 'Principal',
     items: [
-      { id: 'dashboard', label: 'Dashboard',       icon: '▦', href: '/dashboard' },
-      { id: 'upload',    label: 'Cargar Archivos',  icon: '↑', href: '/upload'    },
+      { id: 'dashboard', label: 'Dashboard',       icon: <LayoutDashboard />, href: '/dashboard' },
+      { id: 'upload',    label: 'Cargar Archivos',  icon: <Upload />, href: '/upload'    },
     ],
   },
   {
     section: 'Órdenes',
     items: [
-      { id: 'atrasado',     label: 'Atrasadas',    icon: '●', href: '/ordenes?status=atrasado',     badgeKey: 'atrasado',     badgeColor: 'var(--red)'    },
-      { id: 'expeditacion', label: 'Expeditación', icon: '●', href: '/ordenes?status=expeditacion', badgeKey: 'expeditacion', badgeColor: 'var(--yellow)' },
-      { id: 'atiempo',      label: 'A Tiempo',     icon: '●', href: '/ordenes?status=atiempo',      badgeKey: 'atiempo',      badgeColor: 'var(--green)'  },
+      { id: 'atrasado',     label: 'Atrasadas',    icon: <CircleAlert />, href: '/ordenes?status=atrasado',     badgeKey: 'atrasado',     badgeColor: 'var(--red)'    },
+      { id: 'expeditacion', label: 'Expeditación', icon: <TrendingUp />, href: '/ordenes?status=expeditacion', badgeKey: 'expeditacion', badgeColor: 'var(--yellow)' },
+      { id: 'atiempo',      label: 'A Tiempo',     icon: <CircleCheck />, href: '/ordenes?status=atiempo',      badgeKey: 'atiempo',      badgeColor: 'var(--green)'  },
     ],
   },
   {
     section: 'Herramientas IA',
     isAI: true,
     items: [
-      { id: 'ia-email',       label: 'Redactar Correos',     icon: '✉', href: '/ia/email'       },
-      { id: 'ia-resumen',     label: 'Resumen Ejecutivo',    icon: '≡', href: '/ia/resumen'     },
-      { id: 'ia-comentarios', label: 'Análisis Comentarios', icon: '◈', href: '/ia/comentarios' },
-      { id: 'ia-riesgo',      label: 'Predicción de Riesgo', icon: '⚠', href: '/ia/riesgo'     },
-      { id: 'ia-chat',        label: 'Asistente IA',         icon: '⬡', href: '/ia/chat'        },
+      { id: 'ia-email',       label: 'Redactar Correos',     icon: <Mail />, href: '/ia/email'       },
+      { id: 'ia-resumen',     label: 'Resumen Ejecutivo',    icon: <FileText />, href: '/ia/resumen'     },
+      { id: 'ia-comentarios', label: 'Análisis Comentarios', icon: <Brain />, href: '/ia/comentarios' },
+      { id: 'ia-riesgo',      label: 'Predicción de Riesgo', icon: <AlertTriangle />, href: '/ia/riesgo'     },
+      { id: 'ia-chat',        label: 'Asistente IA',         icon: <Bot />, href: '/ia/chat'        },
     ],
   },
 ];
@@ -271,7 +272,7 @@ export default function Sidebar({ user, onLogout, badges = {} }) {
               onMouseEnter={e => e.currentTarget.style.color = 'var(--red)'}
               onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
             >
-              ⏻
+              <LogOut />
             </button>
           </div>
         </div>

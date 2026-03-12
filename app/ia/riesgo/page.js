@@ -4,6 +4,8 @@ import AppShell from '@/components/layout/AppShell';
 import { ordenesAPI, iaAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import { trunc, formatDate } from '@/lib/utils';
+import { AlertTriangle } from 'lucide-react';
+
 
 const RIESGO = {
   alto:  { label: 'ALTO',  bg: 'var(--red-light)',    color: 'var(--red)'    },
@@ -59,7 +61,7 @@ function IARiesgoContent() {
   return (
     <div>
       <AIHeader
-        icon="⚠"
+        icon={<AlertTriangle />}
         title="PREDICCIÓN DE RIESGO"
         sub="Identifica órdenes en riesgo de atrasarse antes de que ocurra"
       />
@@ -178,7 +180,7 @@ function IARiesgoContent() {
               color: 'var(--muted)',
               textAlign: 'center',
             }}>
-              <span style={{ fontSize: '2.5rem' }}>⚠</span>
+              <span style={{ fontSize: '2.5rem' }}><AlertTriangle style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></span>
               <span style={{ fontSize: '0.82rem' }}>
                 {predicciones.length === 0
                   ? 'Haz clic en "Analizar" para predecir riesgos'

@@ -5,6 +5,8 @@ import Paginacion from '@/components/ui/Paginacion';
 import { correosAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
 import { trunc } from '@/lib/utils';
+import { Mail } from 'lucide-react';
+
 
 export default function CorreosPage() {
   return <AppShell><CorreosContent /></AppShell>;
@@ -133,7 +135,7 @@ function CorreosContent() {
                     color: 'var(--muted)',
                     fontSize: '0.82rem',
                   }}>
-                    <div style={{ marginBottom: 8, fontSize: '2rem' }}>✉</div>
+                    <div style={{ marginBottom: 8, fontSize: '2rem' }}><Mail style={{ width: '2rem', height: '2rem', color: 'var(--muted)' }} /></div>
                     No hay correos enviados todavía.<br />
                     Ve a <strong>Órdenes</strong> o <strong>Herramientas IA → Redactar Correos</strong> para enviar.
                   </td>

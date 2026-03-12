@@ -11,6 +11,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
+import { TrendingUp, Clock, AlertTriangle, Mail, FileText, Brain, Bot } from 'lucide-react';
+
 
 const LIMIT = 15;
 
@@ -85,37 +87,107 @@ function DashboardContent() {
       }}>
         {[
           { label: 'Total Órdenes',    key: 'total',        color: 'var(--navy)',   href: null              },
-          { label: 'Atrasadas',        key: 'atrasado',     color: 'var(--red)',    href: '/ordenes?status=atrasado'     },
-          { label: 'En Expeditación',  key: 'expeditacion', color: 'var(--yellow)', href: '/ordenes?status=expeditacion' },
-          { label: 'A Tiempo',         key: 'atiempo',      color: 'var(--green)',  href: '/ordenes?status=atiempo'      },
-        ].map(({ label, key, color, href }) => (
+          { label: 'Atrasadas',        key: 'atrasado',     color: 'var(--red)',    href: '/ordenes?status=atrasado',
+            icon: (<div
+  style={{
+    backgroundColor: "#fee2e2", // bg-red-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><AlertTriangle
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#dc2626"        // text-red-600
+  }}
+/>
+</div>)
+          },
+          { label: 'En Expeditación',  key: 'expeditacion', color: 'var(--yellow)', href: '/ordenes?status=expeditacion',
+            icon: (<div
+  style={{
+    backgroundColor: "#fef9c3", // bg-yellow-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><TrendingUp
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#ca8a04"        // text-yellow-600
+  }}
+/>
+</div>)
+          },
+          { label: 'A Tiempo',         key: 'atiempo',      color: 'var(--green)',  href: '/ordenes?status=atiempo',
+            icon: (<div
+  style={{
+    backgroundColor: "#d1fae5", // bg-green-100
+    padding: "0.75rem",         // p-3
+    borderRadius: "0.5rem"      // rounded-lg
+  }}
+><Clock
+  style={{
+    width: "1.5rem",        // w-6
+    height: "1.5rem",       // h-6
+    color: "#16a34a"        // text-green-600
+  }}
+/>
+</div>)
+          },
+        ].map(({ label, key, color, href, icon }) => (
           <div
             key={key}
             onClick={() => href && router.push(href)}
             style={{
               background: 'var(--surface)',
               border: '1.5px solid var(--border)',
-              borderTop: `4px solid ${color}`,
+              borderLeft: `4px solid ${color}`,
               borderRadius: 8,
               padding: '18px 20px',
               cursor: href ? 'pointer' : 'default',
-              transition: 'box-shadow 0.18s',
+              transition: 'all 0.18s ease',   // transition-all
               boxShadow: '0 1px 4px rgba(25,43,141,0.05)',
               position: 'relative',
               overflow: 'hidden',
+              transform: 'scale(1)',          // estado normal
             }}
-            onMouseEnter={e => { if (href) e.currentTarget.style.boxShadow = '0 4px 16px rgba(25,43,141,0.12)'; }}
-            onMouseLeave={e => { if (href) e.currentTarget.style.boxShadow = '0 1px 4px rgba(25,43,141,0.05)'; }}
+            onMouseEnter={e => {
+              if (!href) return;
+              e.currentTarget.style.boxShadow =
+                '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)'; // shadow-xl
+              e.currentTarget.style.transform = 'scale(1.05)'; // hover:scale-105
+            }}
+            onMouseLeave={e => {
+              if (!href) return;
+              e.currentTarget.style.boxShadow =
+                '0 1px 4px rgba(25,43,141,0.05)';
+              e.currentTarget.style.transform = 'scale(1)'; // vuelve al normal
+            }}
           >
+
             <div style={{
-              fontSize: '0.62rem',
-              textTransform: 'uppercase',
-              letterSpacing: 2,
-              color: 'var(--muted)',
-              marginBottom: 8,
-              fontWeight: 600,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: 12,
+              gap: 10,
             }}>
-              {label}
+              <div style={{
+                fontSize: '0.62rem',
+                textTransform: 'uppercase',
+                letterSpacing: 2,
+                color: 'var(--muted)',
+                fontWeight: 600,
+                flex: 1,
+              }}>
+                {label}
+              </div>
+              {icon && (
+                <div style={{ flexShrink: 0 }}>
+                  {icon}
+                </div>
+              )}
             </div>
             <div style={{
               fontFamily: 'Bebas Neue, sans-serif',
@@ -336,11 +408,11 @@ function DashboardContent() {
             gap: 10,
           }}>
             {[
-              { icon: '✉', label: 'Redactar Correos',     sub: 'Genera correos personalizados',    href: '/ia/email',       color: 'var(--navy)'   },
-              { icon: '≡', label: 'Resumen Ejecutivo',    sub: 'Análisis ejecutivo del reporte',   href: '/ia/resumen',     color: 'var(--navy)'   },
-              { icon: '◈', label: 'Análisis Comentarios', sub: 'Clasifica comentarios con IA',     href: '/ia/comentarios', color: 'var(--purple)' },
-              { icon: '⚠', label: 'Predicción de Riesgo', sub: 'Identifica órdenes en peligro',   href: '/ia/riesgo',      color: 'var(--yellow)' },
-              { icon: '⬡', label: 'Asistente IA',         sub: 'Chat con datos del reporte',      href: '/ia/chat',        color: 'var(--purple)' },
+              { icon: <Mail />, label: 'Redactar Correos',     sub: 'Genera correos personalizados',    href: '/ia/email',       color: 'var(--navy)'   },
+              { icon: <FileText />, label: 'Resumen Ejecutivo',    sub: 'Análisis ejecutivo del reporte',   href: '/ia/resumen',     color: 'var(--navy)'   },
+              { icon: <Brain />, label: 'Análisis Comentarios', sub: 'Clasifica comentarios con IA',     href: '/ia/comentarios', color: 'var(--purple)' },
+              { icon: <AlertTriangle />, label: 'Predicción de Riesgo', sub: 'Identifica órdenes en peligro',   href: '/ia/riesgo',      color: 'var(--yellow)' },
+              { icon: <Bot />, label: 'Asistente IA',         sub: 'Chat con datos del reporte',      href: '/ia/chat',        color: 'var(--purple)' },
             ].map(({ icon, label, sub, href, color }) => (
               <div
                 key={href}

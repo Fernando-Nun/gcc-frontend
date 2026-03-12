@@ -28,7 +28,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--navy-dark)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--navy-dark)', flexDirection: 'column', padding: '0 20px' }}>
 
       {/* Panel izquierdo */}
       <div style={{
@@ -37,7 +37,7 @@ export default function LoginPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 100,
+        padding: '40px 20px',
         position: 'relative',
         overflow: 'hidden',
       }}>
@@ -47,8 +47,8 @@ export default function LoginPage() {
           position: 'absolute',
           bottom: -80,
           right: -80,
-          width: 450,
-          height: 450,
+          width: '45vw', // Cambiar a porcentaje para responsividad
+          height: '45vw', // Cambiar a porcentaje para responsividad
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(250,34,20,0.15) 0%, transparent 70%)',
           pointerEvents: 'none',
@@ -58,22 +58,22 @@ export default function LoginPage() {
           position: 'absolute',
           top: -60,
           left: -60,
-          width: 360,
-          height: 360,
+          width: '30vw', // Cambiar a porcentaje para responsividad
+          height: '30vw', // Cambiar a porcentaje para responsividad
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
 
-        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 480 }}>
+        <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: '90%' }}>
 
           {/* Logo */}
-          <div style={{ marginBottom: 40 }}>
+          <div style={{ marginBottom: 20 }}>
             <Image
               src="/imagotipo-gcc.svg"
               alt="GCC México"
-              width={300}
-              height={120}
+              width={250}
+              height={100}
               style={{ objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
               priority
             />
@@ -83,23 +83,23 @@ export default function LoginPage() {
             width: 70,
             height: 3,
             background: 'var(--red)',
-            margin: '0 auto 32px',
+            margin: '0 auto 20px',
           }} />
 
           <div style={{
             fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: '2rem',
+            fontSize: '1.5rem', // Tamaño de fuente reducido
             color: 'rgba(255,255,255,0.9)',
-            letterSpacing: 6,
-            marginBottom: 18,
+            letterSpacing: 3,
+            marginBottom: 10,
           }}>
             SISTEMA DE EXPEDITACIÓN
           </div>
 
           <div style={{
-            fontSize: '1rem',
+            fontSize: '0.9rem', // Tamaño de fuente reducido
             color: 'rgba(255,255,255,0.4)',
-            lineHeight: 1.8,
+            lineHeight: 1.6,
           }}>
             Gestión y seguimiento automatizado de órdenes de compra con inteligencia artificial
           </div>
@@ -108,18 +108,18 @@ export default function LoginPage() {
           <div style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: 12,
+            gap: 8,
             justifyContent: 'center',
-            marginTop: 40,
+            marginTop: 20,
           }}>
-            {['Fuzzy Matching', 'Correos Automáticos', 'IA ', 'Dashboard'].map(f => (
+            {['Fuzzy Matching', 'Correos Automáticos', 'IA', 'Dashboard'].map(f => (
               <span key={f} style={{
                 background: 'rgba(255,255,255,0.07)',
                 border: '1px solid rgba(255,255,255,0.12)',
                 color: 'rgba(255,255,255,0.6)',
-                padding: '7px 18px',
+                padding: '5px 12px', // Reducir padding
                 borderRadius: 99,
-                fontSize: '0.8rem',
+                fontSize: '0.7rem', // Tamaño de fuente reducido
                 letterSpacing: 1,
               }}>
                 {f}
@@ -132,38 +132,39 @@ export default function LoginPage() {
 
       {/* Panel derecho */}
       <div style={{
-        width: 600,
+        width: '100%', // Ajustar a 100% para responsividad
+        maxWidth: 600,
         background: '#fff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '90px 70px',
+        padding: '40px 20px', // Reducir padding
       }}>
         <div style={{ width: '100%' }}>
 
           {/* Logo formulario */}
-          <div style={{ marginBottom: 40 }}>
+          <div style={{ marginBottom: 20 }}>
             <Image
               src="/imagotipo-gcc.svg"
               alt="GCC"
-              width={95}
-              height={95}
+              width={80} // Reducir tamaño del logo
+              height={80} // Reducir tamaño del logo
               style={{ objectFit: 'contain' }}
               priority
             />
 
             <div style={{
               fontFamily: 'Bebas Neue, sans-serif',
-              fontSize: '3rem',
+              fontSize: '2.5rem', // Tamaño de fuente reducido
               color: 'var(--navy)',
               letterSpacing: 5,
-              marginTop: 18,
-              marginBottom: 8,
+              marginTop: 10,
+              marginBottom: 4,
             }}>
               ACCESO
             </div>
 
-            <div style={{ fontSize: '1rem', color: 'var(--muted)' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>
               Ingresa con tus credenciales corporativas
             </div>
           </div>
@@ -173,10 +174,10 @@ export default function LoginPage() {
               background: 'var(--red-light)',
               border: '1px solid rgba(250,34,20,0.2)',
               color: 'var(--red)',
-              padding: '14px 18px',
+              padding: '10px 14px', // Reducir padding
               borderRadius: 4,
-              fontSize: '0.95rem',
-              marginBottom: 24,
+              fontSize: '0.85rem', // Tamaño de fuente reducido
+              marginBottom: 20,
             }}>
               {error}
             </div>
@@ -184,14 +185,14 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin}>
 
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 20 }}>
               <label style={{
                 display: 'block',
-                fontSize: '0.75rem',
+                fontSize: '0.65rem', // Tamaño de fuente reducido
                 textTransform: 'uppercase',
                 letterSpacing: 1.6,
                 color: 'var(--muted)',
-                marginBottom: 8,
+                marginBottom: 6,
                 fontWeight: 600,
               }}>
                 Correo electrónico
@@ -204,18 +205,18 @@ export default function LoginPage() {
                 placeholder="usuario@gcc.com.mx"
                 required
                 className="input"
-                style={{ padding: '16px 18px', fontSize: '1rem' }}
+                style={{ padding: '12px 14px', fontSize: '0.9rem', width: '100%' }} // Ajustar ancho
               />
             </div>
 
-            <div style={{ marginBottom: 36 }}>
+            <div style={{ marginBottom: 24 }}>
               <label style={{
                 display: 'block',
-                fontSize: '0.75rem',
+                fontSize: '0.65rem', // Tamaño de fuente reducido
                 textTransform: 'uppercase',
                 letterSpacing: 1.6,
                 color: 'var(--muted)',
-                marginBottom: 8,
+                marginBottom: 6,
                 fontWeight: 600,
               }}>
                 Contraseña
@@ -228,7 +229,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 className="input"
-                style={{ padding: '16px 18px', fontSize: '1rem' }}
+                style={{ padding: '12px 14px', fontSize: '0.9rem', width: '100%' }} // Ajustar ancho
               />
             </div>
 
@@ -239,8 +240,8 @@ export default function LoginPage() {
               style={{
                 width: '100%',
                 justifyContent: 'center',
-                padding: '18px 24px',
-                fontSize: '1.1rem'
+                padding: '16px 20px', // Reducir padding
+                fontSize: '1rem' // Tamaño de fuente reducido
               }}
             >
               {loading
@@ -251,9 +252,9 @@ export default function LoginPage() {
           </form>
 
           <div style={{
-            marginTop: 30,
+            marginTop: 20,
             textAlign: 'center',
-            fontSize: '0.95rem',
+            fontSize: '0.85rem', // Tamaño de fuente reducido
             color: 'var(--muted)',
           }}>
             ¿No tienes cuenta?{' '}

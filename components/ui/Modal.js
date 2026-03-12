@@ -1,8 +1,11 @@
 'use client';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { statusLabel, pillClass, daysBadge, formatDate, trunc } from '@/lib/utils';
 
-export default function Modal({ orden, onClose, onEnviarCorreo }) {
+export default function Modal({ orden, onClose }) {
+  const router = useRouter();
+
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose(); }
     window.addEventListener('keydown', onKey);
@@ -12,6 +15,11 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
   if (!orden) return null;
 
   const db = daysBadge(orden.days_diff);
+
+  function handleRedactarCorreo() {
+    onClose();
+    router.push(`/ia/email?supplier=${encodeURIComponent(orden.supplier)}`);
+  }
 
   return (
     <div
@@ -76,15 +84,10 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
             onClick={onClose}
             style={{
               background: 'rgba(255,255,255,0.1)',
-              border: 'none',
-              color: '#fff',
-              width: 32, height: 32,
-              borderRadius: '50%',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              border: 'none', color: '#fff',
+              width: 32, height: 32, borderRadius: '50%',
+              cursor: 'pointer', fontSize: '1rem',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
             }}
           >✕</button>
@@ -92,23 +95,20 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
 
         {/* Body */}
         <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 22 }}>
-
-          {/* Orden */}
           <Section title="Datos de la Orden">
             <Grid>
-              <Field label="Planta"      value={orden.planta}     mono />
-              <Field label="Comprador"   value={orden.buyer}           />
-              <Field label="Need By"     value={formatDate(orden.need_by)}   mono />
+              <Field label="Planta"      value={orden.planta}              mono />
+              <Field label="Comprador"   value={orden.buyer}                    />
+              <Field label="Need By"     value={formatDate(orden.need_by)}  mono />
               <Field label="Order Date"  value={formatDate(orden.order_date)} mono />
-              <Field label="Artículo"    value={orden.item}       full />
-              <Field label="Cantidad"    value={orden.qty}        mono />
+              <Field label="Artículo"    value={orden.item}                full />
+              <Field label="Cantidad"    value={orden.qty}                 mono />
               {orden.comments && (
-                <Field label="Comentarios" value={orden.comments} full />
+                <Field label="Comentarios" value={orden.comments}          full />
               )}
             </Grid>
           </Section>
 
-          {/* Proveedor */}
           <Section title="Datos del Proveedor">
             {orden.matched ? (
               <Grid>
@@ -116,7 +116,7 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
                 <Field label="Nombre Supplier List" value={orden.sup_name}  full />
                 <Field label="Ciudad"    value={orden.sup_city}   />
                 <Field label="Teléfono"  value={orden.sup_phone}  mono />
-                <Field label="Email"     value={
+                <Field label="Email" value={
                   <span style={{
                     background: 'var(--green-light)',
                     color: 'var(--green)',
@@ -141,7 +141,7 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
                 fontSize: '0.82rem',
                 color: 'var(--yellow)',
               }}>
-                ⚠ Este proveedor no tiene coincidencia en el Supplier List. No es posible enviar correo automático.
+                ⚠ Este proveedor no tiene coincidencia en el Supplier List.
               </div>
             )}
           </Section>
@@ -161,11 +161,11 @@ export default function Modal({ orden, onClose, onEnviarCorreo }) {
             Cerrar
           </button>
           <button
-            onClick={() => orden.matched && onEnviarCorreo?.(orden)}
+            onClick={handleRedactarCorreo}
             disabled={!orden.matched}
-            className="btn btn-navy"
+            className="btn btn-ai"
           >
-            ✉ {orden.matched ? 'Enviar Correo' : 'Sin Email'}
+            ✦ {orden.matched ? 'Redactar Correo con IA' : 'Sin Email'}
           </button>
         </div>
       </div>
@@ -177,14 +177,9 @@ function Section({ title, children }) {
   return (
     <div>
       <div style={{
-        fontSize: '0.6rem',
-        textTransform: 'uppercase',
-        letterSpacing: 2,
-        color: 'var(--muted)',
-        fontWeight: 600,
-        marginBottom: 12,
-        paddingBottom: 8,
-        borderBottom: '1px solid var(--border)',
+        fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: 2,
+        color: 'var(--muted)', fontWeight: 600, marginBottom: 12,
+        paddingBottom: 8, borderBottom: '1px solid var(--border)',
       }}>
         {title}
       </div>
@@ -195,11 +190,7 @@ function Section({ title, children }) {
 
 function Grid({ children }) {
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: 14,
-    }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
       {children}
     </div>
   );
@@ -209,11 +200,8 @@ function Field({ label, value, mono, full }) {
   return (
     <div style={full ? { gridColumn: '1 / -1' } : {}}>
       <div style={{
-        fontSize: '0.6rem',
-        textTransform: 'uppercase',
-        letterSpacing: 1.5,
-        color: 'var(--muted)',
-        marginBottom: 4,
+        fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: 1.5,
+        color: 'var(--muted)', marginBottom: 4,
       }}>
         {label}
       </div>

@@ -85,7 +85,7 @@ function IAChatContent() {
               background: 'var(--green)',
               animation: 'pulse 2s infinite',
             }} />
-            <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>GPT-5.4 conectado</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>GPT-4o mini conectado</span>
           </div>
         </div>
 
@@ -296,7 +296,7 @@ function AIHeader({ icon, title, sub }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{sub}</span>
-          <span className="ai-badge">✦ GPT-5.4</span>
+          <span className="ai-badge">✦ GPT-4o mini</span>
         </div>
       </div>
     </div>

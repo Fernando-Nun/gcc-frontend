@@ -327,7 +327,7 @@ function DashboardContent() {
       <div className="card" style={{ marginBottom: 18 }}>
         <div className="card-header">
           <span className="card-header-title">✦ Herramientas de Inteligencia Artificial</span>
-          <span className="ai-badge">GPT-5.4</span>
+          <span className="ai-badge">GPT-4o mini</span>
         </div>
         <div className="card-body">
           <div style={{

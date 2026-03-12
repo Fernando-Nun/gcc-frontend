@@ -1,41 +1,71 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import { ordenesAPI, iaAPI, correosAPI } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
-import { trunc, formatDate } from '@/lib/utils';
+import { trunc } from '@/lib/utils';
 
 export default function IAEmailPage() {
-  return <AppShell><IAEmailContent /></AppShell>;
+  return (
+    <AppShell>
+      <Suspense fallback={<div style={{ color: 'var(--muted)', padding: 20 }}>Cargando...</div>}>
+        <IAEmailContent />
+      </Suspense>
+    </AppShell>
+  );
 }
 
 function IAEmailContent() {
-  const toast = useToast();
+  const toast          = useToast();
+  const searchParams   = useSearchParams();
+  const supplierParam  = searchParams.get('supplier');
 
-  const [ordenes,      setOrdenes]      = useState([]);
-  const [seleccionadas, setSeleccionadas] = useState([]);
-  const [correo,       setCorreo]       = useState('');
-  const [loadingIA,    setLoadingIA]    = useState(false);
-  const [enviando,     setEnviando]     = useState(false);
-  const [copiado,      setCopiado]      = useState(false);
+  const [ordenes,        setOrdenes]        = useState([]);
+  const [seleccionadas,  setSeleccionadas]  = useState([]);
+  const [correo,         setCorreo]         = useState('');
+  const [loadingIA,      setLoadingIA]      = useState(false);
+  const [enviando,       setEnviando]       = useState(false);
+  const [copiado,        setCopiado]        = useState(false);
+  const [loadingOrdenes, setLoadingOrdenes] = useState(true);
 
   useEffect(() => {
-    ordenesAPI.listar({ status: 'atrasado', limit: 50, matched: 'true' })
-      .then(d => setOrdenes(d.data || []))
-      .catch(() => toast('Error al cargar órdenes', 'error'));
-  }, []);
+    if (!supplierParam) {
+      setLoadingOrdenes(false);
+      return;
+    }
+    setLoadingOrdenes(true);
+    ordenesAPI.listar({
+      supplier: supplierParam,
+      matched: 'true',
+      limit: 500,
+      page: 1,
+    })
+      .then(d => {
+        const data = d.data || [];
+        setOrdenes(data);
+        // Preseleccionar todas por default
+        setSeleccionadas(data.map(o => `${o.po_id}-${o.id}`));
+      })
+      .catch(() => toast('Error al cargar órdenes', 'error'))
+      .finally(() => setLoadingOrdenes(false));
+  }, [supplierParam]);
 
-  function toggleSeleccion(po_id) {
+  function ordenKey(o) { return `${o.po_id}-${o.id}`; }
+
+  function toggleSeleccion(key) {
     setSeleccionadas(prev =>
-      prev.includes(po_id) ? prev.filter(x => x !== po_id) : [...prev, po_id]
+      prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key]
     );
   }
 
   function toggleTodas() {
     setSeleccionadas(prev =>
-      prev.length === ordenes.length ? [] : ordenes.map(o => o.po_id)
+      prev.length === ordenes.length ? [] : ordenes.map(ordenKey)
     );
   }
+
+  const ordsSeleccionadas = ordenes.filter(o => seleccionadas.includes(ordenKey(o)));
 
   async function generarCorreo() {
     if (seleccionadas.length === 0) {
@@ -45,8 +75,7 @@ function IAEmailContent() {
     setLoadingIA(true);
     setCorreo('');
     try {
-      const ordsSelec = ordenes.filter(o => seleccionadas.includes(o.po_id));
-      const { correo: text } = await iaAPI.redactarCorreo(ordsSelec);
+      const { correo: text } = await iaAPI.redactarCorreo(ordsSeleccionadas);
       setCorreo(text);
       toast('✦ Correo generado con IA', 'ai');
     } catch (err) {
@@ -60,8 +89,7 @@ function IAEmailContent() {
     if (!correo) return;
     setEnviando(true);
     try {
-      const ordsSelec = ordenes.filter(o => seleccionadas.includes(o.po_id));
-      const { enviados } = await correosAPI.enviar(ordsSelec);
+      const { enviados } = await correosAPI.enviar(ordsSeleccionadas, null, correo);
       toast(`✉ ${enviados} correo(s) enviado(s)`, 'success');
       setSeleccionadas([]);
       setCorreo('');
@@ -79,51 +107,99 @@ function IAEmailContent() {
     setTimeout(() => setCopiado(false), 2000);
   }
 
+  const STATUS_LABEL = { atrasado: 'Atrasada', expeditacion: 'Expeditación', atiempo: 'A tiempo' };
+  const STATUS_COLOR = { atrasado: 'var(--red)', expeditacion: 'var(--yellow)', atiempo: 'var(--green)' };
+
+  // Pantalla de bienvenida si no hay supplier en URL
+  if (!supplierParam) {
+    return (
+      <div>
+        <AIHeader supplier={null} />
+        <div className="card">
+          <div className="card-body" style={{
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            minHeight: 300, gap: 14, textAlign: 'center',
+          }}>
+            <span style={{ fontSize: '3rem' }}>✉</span>
+            <div style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: '1.4rem', letterSpacing: 2, color: 'var(--navy)',
+            }}>
+              SELECCIONA UN PROVEEDOR
+            </div>
+            <div style={{ fontSize: '0.82rem', color: 'var(--muted)', maxWidth: 400 }}>
+              Para redactar un correo, ve a la tabla de <strong>Órdenes</strong>, haz clic en
+              cualquier orden y selecciona <strong>"Redactar Correo con IA"</strong>.
+              Se cargarán automáticamente todas las órdenes de ese proveedor.
+            </div>
+            <a href="/ordenes?status=atrasado" className="btn btn-navy" style={{ marginTop: 8 }}>
+              Ir a Órdenes →
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <AIHeader
-        icon="✉"
-        title="REDACTAR CORREOS"
-        sub="Genera correos personalizados para proveedores con órdenes atrasadas usando IA"
-      />
+      <AIHeader supplier={supplierParam} />
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 16,
-      }}>
-        {/* Panel izquierdo — selector de órdenes */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+        {/* Panel izquierdo — órdenes del proveedor */}
         <div className="card">
           <div className="card-header">
             <span className="card-header-title">
-              Órdenes atrasadas con contacto
+              Órdenes de este proveedor
+              <span style={{
+                marginLeft: 8, fontSize: '0.65rem',
+                color: 'var(--muted)', fontFamily: 'DM Mono, monospace',
+              }}>
+                ({ordenes.length})
+              </span>
             </span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button onClick={toggleTodas} className="btn btn-ghost" style={{ padding: '4px 10px', fontSize: '0.68rem' }}>
-                {seleccionadas.length === ordenes.length ? 'Ninguna' : 'Todas'}
-              </button>
-            </div>
+            <button
+              onClick={toggleTodas}
+              className="btn btn-ghost"
+              style={{ padding: '4px 10px', fontSize: '0.68rem' }}
+            >
+              {seleccionadas.length === ordenes.length && ordenes.length > 0 ? 'Ninguna' : 'Todas'}
+            </button>
           </div>
 
-          {/* Lista */}
-          <div style={{ maxHeight: 360, overflowY: 'auto' }}>
-            {ordenes.length === 0 ? (
-              <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: '0.8rem' }}>
-                Sin órdenes atrasadas con contacto
+          {seleccionadas.length > 0 && (
+            <div style={{
+              padding: '6px 14px',
+              background: 'var(--navy-xlight)',
+              borderBottom: '1px solid var(--border)',
+              fontSize: '0.72rem',
+              color: 'var(--navy)',
+              fontWeight: 600,
+            }}>
+              {seleccionadas.length} orden{seleccionadas.length !== 1 ? 'es' : ''} seleccionada{seleccionadas.length !== 1 ? 's' : ''}
+            </div>
+          )}
+
+          <div style={{ maxHeight: 420, overflowY: 'auto' }}>
+            {loadingOrdenes ? (
+              <div style={{ padding: 24, textAlign: 'center' }}>
+                <span className="spinner" style={{ margin: '0 auto', display: 'block', borderTopColor: 'var(--navy)' }} />
               </div>
-
-
+            ) : ordenes.length === 0 ? (
+              <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: '0.8rem' }}>
+                Sin órdenes con datos de contacto para este proveedor
+              </div>
             ) : ordenes.map(o => {
-            const selec = seleccionadas.includes(o.po_id);
-            return (
+              const key   = ordenKey(o);
+              const selec = seleccionadas.includes(key);
+              return (
                 <label
-                key={o.id}
+                  key={key}
                   style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 12,
-                    padding: '11px 16px',
-                    borderBottom: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'flex-start', gap: 12,
+                    padding: '11px 16px', borderBottom: '1px solid var(--border)',
                     cursor: 'pointer',
                     background: selec ? 'var(--navy-xlight)' : 'transparent',
                     transition: 'background 0.15s',
@@ -132,53 +208,27 @@ function IAEmailContent() {
                   <input
                     type="checkbox"
                     checked={selec}
-                    onChange={() => toggleSeleccion(o.po_id)}
-                    style={{ accentColor: 'var(--navy)', marginTop: 2, flexShrink: 0 }}
+                    onChange={() => toggleSeleccion(key)}
+                    style={{ accentColor: 'var(--navy)', marginTop: 3, flexShrink: 0 }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      gap: 8,
-                      marginBottom: 2,
-                    }}>
-                      <span style={{
-                        fontFamily: 'DM Mono, monospace',
-                        fontSize: '0.68rem',
-                        color: 'var(--muted)',
-                      }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 2 }}>
+                      <span style={{ fontFamily: 'DM Mono, monospace', fontSize: '0.68rem', color: 'var(--muted)' }}>
                         PO {o.po_id}
                       </span>
                       <span style={{
-                        fontSize: '0.65rem',
-                        color: 'var(--red)',
-                        fontFamily: 'DM Mono, monospace',
-                        flexShrink: 0,
+                        fontSize: '0.62rem', fontWeight: 600, flexShrink: 0,
+                        color: STATUS_COLOR[o.status] || 'var(--muted)',
                       }}>
-                        {Math.abs(o.days_diff)}d atraso
+                        {STATUS_LABEL[o.status] || o.status}
+                        {o.status === 'atrasado' && ` · ${Math.abs(o.days_diff)}d`}
                       </span>
                     </div>
-                    <div style={{
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
-                      color: 'var(--text)',
-                      marginBottom: 2,
-                    }}>
-                      {trunc(o.sup_name || o.supplier, 36)}
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text)', marginBottom: 2 }}>
+                      {trunc(o.item, 38)} · Qty {o.qty}
                     </div>
-                    <div style={{
-                      fontSize: '0.7rem',
-                      color: 'var(--muted)',
-                    }}>
-                      {trunc(o.item, 36)} · {o.planta}
-                    </div>
-                    <div style={{
-                      fontSize: '0.68rem',
-                      color: 'var(--navy)',
-                      fontFamily: 'DM Mono, monospace',
-                      marginTop: 2,
-                    }}>
-                      {o.sup_email}
+                    <div style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>
+                      {o.planta} · {o.buyer} · Need By: {o.need_by}
                     </div>
                   </div>
                 </label>
@@ -186,7 +236,6 @@ function IAEmailContent() {
             })}
           </div>
 
-          {/* Botón generar */}
           <div style={{ padding: 14, borderTop: '1px solid var(--border)' }}>
             <button
               onClick={generarCorreo}
@@ -196,7 +245,7 @@ function IAEmailContent() {
             >
               {loadingIA
                 ? <><span className="spinner" />Generando con IA...</>
-                : <><span>✦</span>Generar Correo ({seleccionadas.length} orden{seleccionadas.length !== 1 ? 'es' : ''})</>
+                : <><span>✦</span> Generar Correo ({seleccionadas.length} orden{seleccionadas.length !== 1 ? 'es' : ''})</>
               }
             </button>
           </div>
@@ -229,89 +278,93 @@ function IAEmailContent() {
           <div style={{ flex: 1, padding: 16 }}>
             {loadingIA ? (
               <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 300,
-                gap: 14,
-                color: 'var(--purple)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', height: 300, gap: 14, color: 'var(--purple)',
               }}>
                 <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
-                <span style={{ fontSize: '0.82rem' }}>Generando correo con Gemini AI...</span>
+                <span style={{ fontSize: '0.82rem' }}>Generando correo con IA...</span>
               </div>
             ) : correo ? (
-              <div style={{
-                background: 'var(--bg)',
-                border: '1.5px solid var(--border)',
-                borderRadius: 4,
-                padding: 18,
-                fontSize: '0.82rem',
-                lineHeight: 1.8,
-                whiteSpace: 'pre-wrap',
-                color: 'var(--text)',
-                minHeight: 300,
-                fontFamily: 'DM Mono, monospace',
-              }}>
-                {correo}
-              </div>
+              <textarea
+                value={correo}
+                onChange={e => setCorreo(e.target.value)}
+                style={{
+                  width: '100%', minHeight: 340,
+                  background: 'var(--bg)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: 4, padding: 18,
+                  fontSize: '0.82rem', lineHeight: 1.8,
+                  color: 'var(--text)',
+                  fontFamily: 'DM Mono, monospace',
+                  resize: 'vertical', outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
             ) : (
               <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 300,
-                gap: 12,
-                color: 'var(--muted)',
-                textAlign: 'center',
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', height: 300, gap: 12,
+                color: 'var(--muted)', textAlign: 'center',
               }}>
                 <span style={{ fontSize: '2rem' }}>✉</span>
                 <span style={{ fontSize: '0.82rem' }}>
-                  Selecciona órdenes y haz clic en<br />"Generar Correo" para crear un correo personalizado
+                  Selecciona las órdenes que quieres incluir<br />y haz clic en "Generar Correo"
                 </span>
               </div>
             )}
           </div>
+
+          {ordsSeleccionadas.length > 0 && correo && (
+            <div style={{
+              padding: '10px 16px',
+              borderTop: '1px solid var(--border)',
+              background: 'var(--navy-xlight)',
+              fontSize: '0.72rem',
+              color: 'var(--navy)',
+              lineHeight: 1.6,
+            }}>
+              <strong>Se enviará a:</strong>{' '}
+              {[...new Set(ordsSeleccionadas.map(o => o.sup_email))].join(', ')}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function AIHeader({ icon, title, sub }) {
+function AIHeader({ supplier }) {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 14,
-      marginBottom: 22,
-    }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
       <div style={{
         width: 46, height: 46,
         background: 'var(--purple-light)',
         borderRadius: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: '1.4rem',
         border: '1.5px solid rgba(124,58,237,0.2)',
         flexShrink: 0,
       }}>
-        {icon}
+        ✉
       </div>
       <div>
         <div style={{
           fontFamily: 'Bebas Neue, sans-serif',
-          fontSize: '1.8rem',
-          letterSpacing: 2,
-          color: 'var(--navy)',
+          fontSize: '1.8rem', letterSpacing: 2, color: 'var(--navy)',
         }}>
-          {title}
+          REDACTAR CORREO
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{sub}</span>
-          <span className="ai-badge">✦ GPT-5.4</span>
+          {supplier ? (
+            <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
+              Proveedor: <strong style={{ color: 'var(--navy)' }}>{supplier}</strong>
+            </span>
+          ) : (
+            <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
+              Selecciona un proveedor desde la tabla de órdenes
+            </span>
+          )}
+          <span className="ai-badge">✦ GPT-4o mini</span>
         </div>
       </div>
     </div>

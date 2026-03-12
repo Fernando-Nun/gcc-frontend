@@ -317,7 +317,7 @@ function AIHeader({ icon, title, sub }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{sub}</span>
-          <span className="ai-badge">✦ GPT-5.4</span>
+          <span className="ai-badge">✦ GPT-4o mini</span>
         </div>
       </div>
     </div>
